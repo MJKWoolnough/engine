@@ -1,0 +1,11 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "github.com/BurntSushi/toml",
+			"revision": "75869ce70f3cd0f6d1473c58f4adac5941f1055a",
+			"revisionTime": "2016-03-02T20:09:19-08:00"
+		}
+	]
+}
