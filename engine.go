@@ -8,11 +8,12 @@ const (
 	KeyDown
 	KeyLeft
 	KeyRight
+	numKeys
 )
 
 type keys map[key]struct{}
 
-var Keys = make(keys)
+var Keys = make(keys, numKeys)
 
 func (k keys) Down(ky key) {
 	k[ky] = struct{}{}
