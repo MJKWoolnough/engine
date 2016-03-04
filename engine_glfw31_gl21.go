@@ -19,7 +19,7 @@ var keyMap = map[glfw.Key]key{
 	glfw.KeyRight:  KeyRight,
 }
 
-func loop(c Config) error {
+func loop(c Config, run func(int, int, float64) bool) error {
 	if err := glfw.Init(); err != nil {
 		return err
 	}
@@ -35,6 +35,9 @@ func loop(c Config) error {
 
 	window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 		eKey, ok := keyMap[key]
+		if !ok {
+			return
+		}
 		if action == glfw.Press {
 			Keys.Down(eKey)
 		} else if action == glfw.Release {
@@ -46,27 +49,9 @@ func loop(c Config) error {
 
 	for !window.ShouldClose() {
 		width, height := window.GetSize()
-		ratio := float64(width) / float64(height)
-
-		gl.Viewport(0, 0, int32(width), int32(height))
-		gl.Clear(gl.COLOR_BUFFER_BIT)
-
-		gl.MatrixMode(gl.PROJECTION)
-		gl.LoadIdentity()
-		gl.Ortho(-ratio, ratio, -1, 1, 1, -1)
-		gl.MatrixMode(gl.MODELVIEW)
-
-		gl.LoadIdentity()
-		gl.Rotated(glfw.GetTime()*50, 0, 0, 1)
-
-		gl.Begin(gl.TRIANGLES)
-		gl.Color3f(1, 0, 0)
-		gl.Vertex3f(-0.6, -0.4, 0.)
-		gl.Color3f(0, 1, 0)
-		gl.Vertex3f(0.6, -0.4, 0)
-		gl.Color3f(0, 0, 1)
-		gl.Vertex3f(0, 0.6, 0)
-		gl.End()
+		if !run(width, height, glfw.GetTime()) {
+			window.SetShouldClose(true)
+		}
 
 		window.SwapBuffers()
 		glfw.PollEvents()
