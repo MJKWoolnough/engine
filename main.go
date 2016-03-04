@@ -10,6 +10,18 @@ type Config struct {
 	Title string
 }
 
+func run(width, height int, time float64) bool {
+	t := triangle{
+		Angle: time,
+	}
+	t.Angle = time
+	t.Render(width, height, time)
+	if Keys.Pressed(KeyEscape) {
+		return false
+	}
+	return true
+}
+
 func main() {
 	var c Config
 	c.Width = 640
@@ -28,7 +40,7 @@ func main() {
 		f.Close()
 	}
 
-	if err := loop(c); err != nil {
+	if err := loop(c, run); err != nil {
 		fmt.Fprintf(os.Stderr, "Error occurred: %s", err)
 		return
 	}
