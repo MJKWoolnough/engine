@@ -11,6 +11,14 @@ func init() {
 	runtime.LockOSThread()
 }
 
+var keyMap = map[glfw.Key]key{
+	glfw.KeyEscape: KeyEscape,
+	glfw.KeyUp:     KeyUp,
+	glfw.KeyDown:   KeyDown,
+	glfw.KeyLeft:   KeyLeft,
+	glfw.KeyRight:  KeyRight,
+}
+
 func loop(c Config) error {
 	if err := glfw.Init(); err != nil {
 		return err
@@ -26,8 +34,11 @@ func loop(c Config) error {
 	glfw.SwapInterval(1)
 
 	window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-		if key == glfw.KeyEscape && action == glfw.Press {
-			w.SetShouldClose(true)
+		eKey, ok := keyMap[key]
+		if action == glfw.Press {
+			Keys.Down(eKey)
+		} else if action == glfw.Release {
+			Keys.Up(eKey)
 		}
 	})
 
