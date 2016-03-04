@@ -20,7 +20,7 @@ func (k keys) Down(ky key) {
 }
 
 func (k keys) Up(ky key) {
-	delete(k[ky])
+	delete(k, ky)
 }
 
 func (k keys) Pressed(ky key) bool {
