@@ -1,29 +1,40 @@
-package main
+package engine
 
-type key uint
+const noEngine = "no engine registered"
+
+type engine interface {
+	Pressed(Key) bool
+}
+
+type none struct{}
+
+func (none) Pressed(Key) bool {
+	panic(noEngine)
+}
+
+var registered engine = none{}
+
+func Register(e engine) {
+	switch registered.(type) {
+	case none:
+		registered = e
+	default:
+		panic("cannot register multiple engines")
+	}
+}
+
+type Key uint
 
 const (
-	KeyEscape key = iota
+	KeyEscape Key = iota
 	KeyUp
 	KeyDown
 	KeyLeft
 	KeyRight
-	numKeys
+	MouseLeft
+	MouseMiddle
+	MouseRight
+	MouseScrollUp
+	MouseScrollDown
+	NumKeys
 )
-
-type keys map[key]struct{}
-
-var Keys = make(keys, numKeys)
-
-func (k keys) Down(ky key) {
-	k[ky] = struct{}{}
-}
-
-func (k keys) Up(ky key) {
-	delete(k, ky)
-}
-
-func (k keys) Pressed(ky key) bool {
-	_, ok := k[ky]
-	return ok
-}

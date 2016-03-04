@@ -1,4 +1,4 @@
-package main
+package glfw31_gl21
 
 import (
 	"runtime"
