@@ -3,12 +3,22 @@ package engine
 const noEngine = "no engine registered"
 
 type engine interface {
-	Pressed(Key) bool
+	Loop(Config, func(int, int, float64) bool)
+	KeyPressed(Key) bool
+	CursorPos() (float64, float64)
 }
 
 type none struct{}
 
-func (none) Pressed(Key) bool {
+func (none) Loop(Config, func(int, int, float64) bool) {
+	panic(noEngine)
+}
+
+func (none) KeyPressed(Key) bool {
+	panic(noEngine)
+}
+
+func (none) CursorPos() (float64, float64) {
 	panic(noEngine)
 }
 
@@ -36,5 +46,4 @@ const (
 	MouseRight
 	MouseScrollUp
 	MouseScrollDown
-	NumKeys
 )
