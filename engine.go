@@ -32,18 +32,3 @@ func Register(e engine) {
 		panic("cannot register multiple engines")
 	}
 }
-
-type Key uint
-
-const (
-	KeyEscape Key = iota
-	KeyUp
-	KeyDown
-	KeyLeft
-	KeyRight
-	MouseLeft
-	MouseMiddle
-	MouseRight
-	MouseScrollUp
-	MouseScrollDown
-)
