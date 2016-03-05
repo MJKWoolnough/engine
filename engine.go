@@ -10,7 +10,7 @@ type engine interface {
 
 type none struct{}
 
-func (none) Loop(Config, func(int, int, float64) bool) {
+func (none) Loop(Config, func(int, int, float64) bool) error {
 	panic(noEngine)
 }
 
