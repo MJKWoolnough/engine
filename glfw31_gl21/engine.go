@@ -49,35 +49,9 @@ func (g *glengine) Loop(c engine.Config, run func(int, int, float64) bool) error
 	window.MakeContextCurrent()
 	glfw.SwapInterval(1)
 
-	window.SetKeyCallback(func(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-		eKey, ok := keyMap[key]
-		if !ok {
-			return
-		}
-		if action == glfw.Press {
-			Keys.Down(eKey)
-		} else if action == glfw.Release {
-			Keys.Up(eKey)
-		}
-	})
-
-	window.SetMouseButtonCallback(func(w *glfw.Window, button glfw.MouseButton, action glfw.Action, mod glfw.ModifierKey) {
-		eKey, ok := mouseMap[button]
-		if !ok {
-			return
-		}
-		if action == glfw.Press {
-			Keys.Down(eKey)
-		} else if action == glfw.Release {
-			Keys.Up(eKey)
-		}
-	})
-
 	gl.Init()
 
 	for !window.ShouldClose() {
-		mouseX, mouseY := window.GetCursorPos()
-		Cursor.SetPos(int(mouseX), int(mouseY))
 		width, height := window.GetSize()
 		if !run(width, height, glfw.GetTime()) {
 			window.SetShouldClose(true)
@@ -93,7 +67,7 @@ func (g *glengine) KeyPressed(k engine.Key) bool {
 	if mk, ok := mouseMap[k]; ok {
 		return g.window.GetMouseButton(mk) == glfw.Press
 	} else if kk, ok := keyMap[k]; ok {
-		return kk == glfw.Press
+		return g.window.GetKey(kk) == glfw.Press
 	}
 	return false
 }
