@@ -3,7 +3,7 @@ package engine
 const noEngine = "no engine registered"
 
 type engine interface {
-	Loop(Config, func(int, int, float64) bool)
+	Loop(Config, func(int, int, float64) bool) error
 	KeyPressed(Key) bool
 	CursorPos() (float64, float64)
 }
