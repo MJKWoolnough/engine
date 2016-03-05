@@ -32,3 +32,15 @@ func Register(e engine) {
 		panic("cannot register multiple engines")
 	}
 }
+
+func Loop(c Config, run func(int, int, float64) bool) error {
+	return registered.Loop(c, run)
+}
+
+func KeyPressed(k Key) bool {
+	return registered.KeyPressed(k)
+}
+
+func CursorPos() (float64, float64) {
+	return registered.CursorPos()
+}
