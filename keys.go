@@ -3,14 +3,14 @@ package engine
 type Key uint
 
 const (
-	KeyEscape Key = iota
-	KeyUp
-	KeyDown
-	KeyLeft
-	KeyRight
-	MouseLeft
-	MouseMiddle
-	MouseRight
-	MouseScrollUp
-	MouseScrollDown
+	KeyEscape       Key = iota //Escape
+	KeyUp                      //Up
+	KeyDown                    //Down
+	KeyLeft                    //Left
+	KeyRight                   //Right
+	MouseLeft                  //Left
+	MouseMiddle                //Middle
+	MouseRight                 //Right
+	MouseScrollUp              //Mouse Scroll Up
+	MouseScrollDown            //Mouse Scroll Down
 )
