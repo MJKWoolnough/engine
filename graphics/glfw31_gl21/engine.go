@@ -14,7 +14,9 @@ type glengine struct {
 
 func init() {
 	runtime.LockOSThread()
-	engine.Register(&glengine{})
+	g := &glengine{}
+	engine.RegisterGraphics(g)
+	engine.RegisterInput(g)
 }
 
 var keyMap = map[engine.Key]glfw.Key{
