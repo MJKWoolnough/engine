@@ -6,7 +6,11 @@ type graphics interface {
 	Loop(Config, func(int, int, float64) bool) error
 }
 
+type Sound interface {
+}
+
 type audio interface {
+	Play(Sound)
 }
 
 type input interface {
@@ -71,4 +75,8 @@ func KeyPressed(k Key) bool {
 
 func CursorPos() (float64, float64) {
 	return registeredInput.CursorPos()
+}
+
+func PlaySound(s Sound) {
+	registeredAudio.Play(s)
 }
