@@ -32,6 +32,10 @@ func (none) CursorPos() (float64, float64) {
 	panic(noEngine)
 }
 
+func (none) Play(Sound) {
+	panic(noEngine)
+}
+
 var (
 	registeredGraphics graphics = none{}
 	registeredAudio    audio    = none{}
