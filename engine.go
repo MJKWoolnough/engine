@@ -1,5 +1,7 @@
 package engine
 
+import "io"
+
 const noEngine = "no engine registered"
 
 type graphics interface {
@@ -13,9 +15,16 @@ type audio interface {
 	Play(Sound)
 }
 
+type Font interface {
+}
+
 type input interface {
 	KeyPressed(Key) bool
 	CursorPos() (float64, float64)
+}
+
+type text interface {
+	LoadFont(io.Reader) Font
 }
 
 type none struct{}
@@ -36,10 +45,15 @@ func (none) Play(Sound) {
 	panic(noEngine)
 }
 
+func (none) LoadFont(io.Reader) Font {
+	panic(noEngine)
+}
+
 var (
 	registeredGraphics graphics = none{}
 	registeredAudio    audio    = none{}
 	registeredInput    input    = none{}
+	registeredText     text     = none{}
 )
 
 func RegisterGraphics(g graphics) {
@@ -69,6 +83,15 @@ func RegisterInput(i input) {
 	}
 }
 
+func RegisterText(t text) {
+	switch registeredText.(type) {
+	case none:
+		registeredText = t
+	default:
+		panic("cannot register multiple text engines")
+	}
+}
+
 func Loop(c Config, run func(int, int, float64) bool) error {
 	return registeredGraphics.Loop(c, run)
 }
@@ -83,4 +106,8 @@ func CursorPos() (float64, float64) {
 
 func PlaySound(s Sound) {
 	registeredAudio.Play(s)
+}
+
+func LoadFont(r io.Reader) Font {
+	return registeredText.LoadFont(r)
 }
