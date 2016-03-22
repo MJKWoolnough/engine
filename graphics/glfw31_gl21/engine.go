@@ -17,6 +17,7 @@ func init() {
 	g := &glengine{}
 	engine.RegisterGraphics(g)
 	engine.RegisterInput(g)
+	engine.RegisterText(g)
 }
 
 var keyMap = map[engine.Key]glfw.Key{
