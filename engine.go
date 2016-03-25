@@ -16,6 +16,7 @@ type audio interface {
 }
 
 type Font interface {
+	Render(int, int, string)
 }
 
 type input interface {
