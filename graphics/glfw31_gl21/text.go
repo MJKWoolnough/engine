@@ -36,6 +36,6 @@ func (g *glengine) LoadFont(r io.Reader, min, max rune) (engine.Font, error) {
 	return font{min, max, p}, nil
 }
 
-func (f font) Render(x, z int, text string) {
+func (f font) Render(x, z float64, text string) {
 
 }
