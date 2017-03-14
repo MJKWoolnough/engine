@@ -4,8 +4,13 @@ import "io"
 
 const noEngine = "no engine registered"
 
-type graphics interface {
+type window interface {
 	Loop(Config, func(int, int, float64) bool) error
+}
+
+type graphics interface {
+	Init() error
+	Uninit() error
 }
 
 type Sound interface {
@@ -34,6 +39,14 @@ func (none) Loop(Config, func(int, int, float64) bool) error {
 	panic(noEngine)
 }
 
+func (none) Init() error {
+	panic(noEngine)
+}
+
+func (none) Uninit() error {
+	panic(noEngine)
+}
+
 func (none) KeyPressed(Key) bool {
 	panic(noEngine)
 }
@@ -52,10 +65,20 @@ func (none) LoadFont(io.Reader) Font {
 
 var (
 	registeredGraphics graphics = none{}
+	registeredWindow   window   = none{}
 	registeredAudio    audio    = none{}
 	registeredInput    input    = none{}
 	registeredText     text     = none{}
 )
+
+func RegisterWindow(w window) {
+	switch registeredWindow.(type) {
+	case none:
+		registeredWindow = w
+	default:
+		panic("cannot register multiple window engines")
+	}
+}
 
 func RegisterGraphics(g graphics) {
 	switch registeredGraphics.(type) {
@@ -94,7 +117,15 @@ func RegisterText(t text) {
 }
 
 func Loop(c Config, run func(int, int, float64) bool) error {
-	return registeredGraphics.Loop(c, run)
+	return registeredWindow.Loop(c, run)
+}
+
+func GLInit() error {
+	return registeredGraphics.Init()
+}
+
+func GLUninit() error {
+	return registeredGraphics.Uninit()
 }
 
 func KeyPressed(k Key) bool {
