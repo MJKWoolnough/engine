@@ -6,6 +6,7 @@ const noEngine = "no engine registered"
 
 type window interface {
 	Loop(Config, func(int, int, float64) bool) error
+	Close()
 }
 
 type graphics interface {
@@ -118,6 +119,10 @@ func RegisterText(t text) {
 
 func Loop(c Config, run func(int, int, float64) bool) error {
 	return registeredWindow.Loop(c, run)
+}
+
+func Close() {
+	return registeredWindow.Close()
 }
 
 func GLInit() error {
