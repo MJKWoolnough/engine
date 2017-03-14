@@ -14,8 +14,8 @@ type glfwengine struct {
 func init() {
 	runtime.LockOSThread()
 	g := &glfwengine{}
+	engine.RegisterWindow(g)
 	engine.RegisterInput(g)
-	engine.RegisterText(g)
 }
 
 var keyMap = map[engine.Key]glfw.Key{
