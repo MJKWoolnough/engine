@@ -32,7 +32,7 @@ var mouseMap = map[engine.Key]glfw.MouseButton{
 	engine.MouseRight:  glfw.MouseButtonRight,
 }
 
-func (g *glfwengine) Loop(c engine.Config, run func(int, int, float64) bool) (err error) {
+func (g *glfwengine) Loop(c engine.Config, run func(int, int, float64) bool) error {
 	if err := glfw.Init(); err != nil {
 		return err
 	}
@@ -64,6 +64,10 @@ func (g *glfwengine) Loop(c engine.Config, run func(int, int, float64) bool) (er
 		glfw.PollEvents()
 	}
 	return engine.GLUninit()
+}
+
+func (g *glfwengine) Close() {
+	g.window.SetShouldClose(true)
 }
 
 func (g *glfwengine) KeyPressed(k engine.Key) bool {
