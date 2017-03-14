@@ -29,7 +29,7 @@ echo -n "	keyStrings = "\";
 	done < keys.go;
 
 	echo "\"";
-	echo -n "	keyIndexes = []uint16{0";
+	echo -n "	keyIndexes = [...]uint16{0";
 	for index in ${indexes[@]}; do
 		echo -n ", $index";
 	done;

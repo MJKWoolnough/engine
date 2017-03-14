@@ -2,7 +2,7 @@ package engine
 
 var (
 	keyStrings = "EscapeUpDownLeftRightLeftMiddleRightMouse Scroll UpMouse Scroll Down"
-	keyIndexes = []uint16{0, 6, 8, 12, 16, 21, 25, 31, 36, 51, 68}
+	keyIndexes = [...]uint16{0, 6, 8, 12, 16, 21, 25, 31, 36, 51, 68}
 )
 
 func (k Key) String() string {
