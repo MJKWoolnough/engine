@@ -11,15 +11,17 @@ import (
 	"honnef.co/go/js/dom"
 )
 
-var raf, uraf *js.Object
+var (
+	raf, uraf *js.Object
+	Instance  webglengine
+)
 
 func init() {
 	raf = js.Global.Get("requestAnimationFrame")
 	uraf = js.Global.Get("cancelAnimationFrame")
 	if raf != nil {
-		w := &webglengine{}
-		engine.RegisterWindow(w)
-		engine.RegisterInput(w)
+		engine.RegisterWindow(&Instance)
+		engine.RegisterInput(&Instance)
 	}
 }
 
@@ -29,6 +31,7 @@ type webglengine struct {
 	fn             func(int, int, float64)
 	rafID          int
 	mouseX, mouseY float64
+	keys           map[string]struct{}
 }
 
 func (w *webglengine) Loop(c engine.Config, run func(int, int, float64) bool) error {
@@ -36,6 +39,7 @@ func (w *webglengine) Loop(c engine.Config, run func(int, int, float64) bool) er
 	canvas := xdom.Canvas()
 	canvas.Width = c.Width
 	canvas.Height = c.Height
+	canvas.SetTabIndex(1)
 	ctx, err := webgl.NewContext(canvas)
 
 	if err != nil {
@@ -51,7 +55,46 @@ func (w *webglengine) Loop(c engine.Config, run func(int, int, float64) bool) er
 	w.context = ctx
 	w.fn = run
 
-	// set up mouse and keyboard event handlers
+	canvas.AddEventListener("mousemove", false, func(m dom.Event) {
+		w.mouseX = m.Underlying().Get("clientX").Int()
+		w.mouseY = m.Underlying().Get("clientY").Int()
+		m.StopPropagation()
+		m.PreventDefault()
+	})
+
+	mb := func(set bool) func(dom.Event) {
+		return func(m dom.Event) {
+			button := m.Underlying().Get("button").String()
+			if set {
+				w.keys["mouse_"+button] = struct{}{}
+			} else {
+				delete(w.keys, "mouse_"+button)
+			}
+			m.StopPropagation()
+			m.PreventDefault()
+		}
+	}
+
+	canvas.AddEventListener("mousedown", false, mb(true))
+	canvas.AddEventListener("mouseup", false, mb(false))
+
+	w.keys = make(map[string]struct{})
+
+	kb := func(set bool) func(dom.Event) {
+		return func(k dom.Event) {
+			key := k.Underlying().Get("key").String()
+			if set {
+				w.keys[key] = struct{}{}
+			} else {
+				delete(w.keys, key)
+			}
+			k.StopPropagation()
+			k.PreventDefault()
+		}
+	}
+
+	canvas.AddEventListener("keydown", false, kb(true))
+	canvas.AddEventListener("keyup", false, kb(false))
 
 	w.rafID = raf.Invoke(w.loop).Int()
 }
@@ -69,10 +112,30 @@ func (w *webglengine) loop(t float64) { // DOMHighResTimeStamp ??
 	w.rafID = raf.Invoke(w.loop).Int()
 }
 
+var keyMap = map[engine.Key]string{
+	engine.MouseLeft:   "mouse_0",
+	engine.MouseMiddle: "mouse_1",
+	engine.MouseRight:  "mouse_2",
+	engine.KeyEscape:   "Escape",
+	engine.KeyUp:       "ArrowUp",
+	engine.KeyDown:     "ArrowDown",
+	engine.KeyLeft:     "ArrowLeft",
+	engine.KeyRight:    "ArrowRight",
+}
+
 func (w *webglengine) KeyPressed(k engine.Key) bool {
-	return false
+	kn, ok := keyMap[k]
+	if !ok {
+		return false
+	}
+	_, keyPressed := w.keys[kn]
+	return keyPressed
 }
 
 func (w *webglengine) CursorPos() (x, y float64) {
 	return w.mouseX, w.mouseY
+}
+
+func (w *webglengine) Context() *webgl.Context {
+	return w.Context
 }
