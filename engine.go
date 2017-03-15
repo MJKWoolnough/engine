@@ -40,6 +40,10 @@ func (none) Loop(Config, func(int, int, float64) bool) error {
 	panic(noEngine)
 }
 
+func (none) Close() {
+	panic(noEngine)
+}
+
 func (none) Init() error {
 	panic(noEngine)
 }
@@ -122,7 +126,7 @@ func Loop(c Config, run func(int, int, float64) bool) error {
 }
 
 func Close() {
-	return registeredWindow.Close()
+	registeredWindow.Close()
 }
 
 func GLInit() error {
