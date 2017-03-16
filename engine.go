@@ -5,7 +5,7 @@ import "io"
 const noEngine = "no engine registered"
 
 type window interface {
-	Loop(Config, func(int, int, float64) bool) error
+	Loop(Config, func(int, int, float64)) error
 	Close()
 }
 
@@ -36,7 +36,7 @@ type text interface {
 
 type none struct{}
 
-func (none) Loop(Config, func(int, int, float64) bool) error {
+func (none) Loop(Config, func(int, int, float64)) error {
 	panic(noEngine)
 }
 
@@ -121,7 +121,7 @@ func RegisterText(t text) {
 	}
 }
 
-func Loop(c Config, run func(int, int, float64) bool) error {
+func Loop(c Config, run func(int, int, float64)) error {
 	return registeredWindow.Loop(c, run)
 }
 

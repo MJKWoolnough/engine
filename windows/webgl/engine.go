@@ -34,7 +34,7 @@ type webglengine struct {
 	keys           map[string]struct{}
 }
 
-func (w *webglengine) Loop(c engine.Config, run func(int, int, float64) bool) error {
+func (w *webglengine) Loop(c engine.Config, run func(int, int, float64)) error {
 
 	canvas := xdom.Canvas()
 	canvas.Width = c.Width
