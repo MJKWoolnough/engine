@@ -4,8 +4,32 @@ import "io"
 
 const noEngine = "no engine registered"
 
+type Monitor struct {
+	Name string
+	data interface{}
+}
+
+func NewMonitor(name string, data interface{}) *Monitor {
+	return &Monitor{
+		Name: name,
+		data: data,
+	}
+}
+
+func (m *Monitor) GetModes() []Mode {
+	return registeredWindow.GetModes(m.data)
+}
+
+type Mode struct {
+	Width, Height int
+	Refresh       int
+}
+
 type window interface {
 	Loop(Config, func(int, int, float64)) error
+	GetMonitors() []*Monitor
+	GetModes(interface{}) []Mode
+	SetMode(interface{}, Mode)
 	Close()
 }
 
@@ -37,6 +61,18 @@ type text interface {
 type none struct{}
 
 func (none) Loop(Config, func(int, int, float64)) error {
+	panic(noEngine)
+}
+
+func (none) GetMonitors() []*Monitor {
+	panic(noEngine)
+}
+
+func (none) GetModes(interface{}) []Mode {
+	panic(noEngine)
+}
+
+func (none) SetMode(interface{}, Mode) {
 	panic(noEngine)
 }
 
@@ -135,6 +171,18 @@ func GLInit() error {
 
 func GLUninit() error {
 	return registeredGraphics.Uninit()
+}
+
+func GetMonitors() []*Monitor {
+	return registeredWindow.GetMonitors()
+}
+
+func SetMode(m *Monitor, mode Mode) {
+	var data interface{}
+	if m != nil {
+		data = m.data
+	}
+	registeredWindow.SetMode(data, mode)
 }
 
 func KeyPressed(k Key) bool {
