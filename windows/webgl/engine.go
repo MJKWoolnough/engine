@@ -139,3 +139,51 @@ func (w *webglengine) CursorPos() (x, y float64) {
 func (w *webglengine) Context() *webgl.Context {
 	return w.Context
 }
+
+func (w *webglengine) GetMonitors() []*engine.Monitor {
+	if w.canvas.Get("requestFullscreen") != nil {
+		return []*engine.Monitor{
+			engine.NewMonitor("Browser", int(0)),
+			engine.NewMonitor("Fullscreen", int(1)),
+		}
+	}
+	return []*engine.Monitor{
+		engine.NewMonitor("Browser", int(0)),
+	}
+}
+
+func (w *webglengine) GetModes(m interface{}) []engine.Mode {
+	t, ok := m.(int)
+	if !ok {
+		return nil
+	}
+	screen := js.Global.Get("screen")
+	var width, height int
+	if t == 0 {
+		width = screen.Get("availWidth").Int()
+		height = screen.Get("availHeight").Int()
+	} else {
+		width = screen.Get("width").Int()
+		height = screen.Get("height").Int()
+	}
+	return []engine.Mode{
+		engine.Mode{
+			Width:   width,
+			Height:  height,
+			Refresh: 60,
+		},
+	}
+}
+
+func (w *webglengine) SetMode(m interface{}, mode engine.Mode) {
+	var monitor int
+	if m != nil {
+		var ok bool
+		monitor, ok = m.(int)
+	}
+	w.canvas.Width = mode.Width
+	w.canvas.Height = mode.Height
+	if monitor == 1 {
+		w.canvas.Call("requestFullscreen")
+	}
+}
