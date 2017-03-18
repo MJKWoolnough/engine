@@ -122,10 +122,14 @@ func (m modes) Swap(i, j int) {
 }
 
 func (g *glfwengine) GetMonitors() []*engine.Monitor {
+	pm := glfw.GetPrimaryMonitor()
 	monitors := glfw.GetMonitors()
-	em := make([]*engine.Monitor, len(monitors))
-	for n, m := range monitors {
-		em[n] = engine.NewMonitor(m.GetName(), m)
+	em := make([]*engine.Monitor, 1, len(monitors))
+	em[0] = engine.NewMonitor(pm.GetName(), pm)
+	for _, m := range monitors {
+		if m != pm {
+			em = append(em, engine.NewMonitor(m.GetName(), m))
+		}
 	}
 	return em
 }
