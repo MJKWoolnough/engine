@@ -143,8 +143,8 @@ func (w *webglengine) Context() *webgl.Context {
 func (w *webglengine) GetMonitors() []*engine.Monitor {
 	if w.canvas.Get("requestFullscreen") != nil {
 		return []*engine.Monitor{
-			engine.NewMonitor("Browser", int(0)),
 			engine.NewMonitor("Fullscreen", int(1)),
+			engine.NewMonitor("Browser", int(0)),
 		}
 	}
 	return []*engine.Monitor{
