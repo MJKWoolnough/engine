@@ -50,6 +50,7 @@ func (w *webglengine) Loop(c engine.Config, run func(int, int, float64)) error {
 		tDoc.SetTitle(c.Title)
 	}
 	xjs.Body().AppendChild(canvas)
+	w.SetMonitor(c.Monitor.Data())
 
 	w.canvas = canvas
 	w.context = ctx
@@ -176,14 +177,22 @@ func (w *webglengine) GetModes(m interface{}) []engine.Mode {
 }
 
 func (w *webglengine) SetMode(m interface{}, mode engine.Mode) {
+	w.canvas.Width = mode.Width
+	w.canvas.Height = mode.Height
+	w.SetMonitor(m)
+}
+
+func (w *webglengine) SetMonitor(m interface{}) {
 	var monitor int
 	if m != nil {
 		var ok bool
 		monitor, ok = m.(int)
 	}
-	w.canvas.Width = mode.Width
-	w.canvas.Height = mode.Height
 	if monitor == 1 {
-		w.canvas.Call("requestFullscreen")
+		if w.canvas.Get("requestFullscreen") != nil {
+			w.canvas.Call("requestFullscreen")
+		}
+	} else if w.canvas.Get("exitFullscreen") != nil {
+		w.canvas.Call("exitFullscreen")
 	}
 }
