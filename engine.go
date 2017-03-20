@@ -20,6 +20,10 @@ func (m *Monitor) GetModes() []Mode {
 	return registeredWindow.GetModes(m.data)
 }
 
+func (m *Monitor) Data() interface{} {
+	return m.data
+}
+
 type Mode struct {
 	Width, Height int
 	Refresh       int
