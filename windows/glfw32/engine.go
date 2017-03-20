@@ -17,6 +17,9 @@ func init() {
 	g := &glfwengine{}
 	engine.RegisterWindow(g)
 	engine.RegisterInput(g)
+	if err := glfw.Init(); err != nil {
+		panic(err)
+	}
 }
 
 var keyMap = map[engine.Key]glfw.Key{
@@ -34,11 +37,14 @@ var mouseMap = map[engine.Key]glfw.MouseButton{
 }
 
 func (g *glfwengine) Loop(c engine.Config, run func(int, int, float64)) error {
-	if err := glfw.Init(); err != nil {
-		return err
-	}
 	defer glfw.Terminate()
-	window, err := glfw.CreateWindow(int(c.Width), int(c.Height), c.Title, nil, nil)
+	var monitor *glfw.Monitor
+	if c.Monitor != nil {
+		if m, ok := c.Monitor.Data().(*glfw.Monitor); ok {
+			monitor = m
+		}
+	}
+	window, err := glfw.CreateWindow(int(c.Width), int(c.Height), c.Title, monitor, nil)
 	if err != nil {
 		return err
 	}
