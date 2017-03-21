@@ -131,9 +131,10 @@ func (g *glfwengine) GetMonitors() []*engine.Monitor {
 	pm := glfw.GetPrimaryMonitor()
 	monitors := glfw.GetMonitors()
 	em := make([]*engine.Monitor, 1, len(monitors))
-	em[0] = engine.NewMonitor(pm.GetName(), pm)
+	pmn := pm.GetName()
+	em[0] = engine.NewMonitor(pmn, pm)
 	for _, m := range monitors {
-		if m != pm {
+		if m.GetName() != pmn {
 			em = append(em, engine.NewMonitor(m.GetName(), m))
 		}
 	}
