@@ -144,23 +144,30 @@ func (w *webglengine) Context() *webgl.Context {
 func (w *webglengine) GetMonitors() []*engine.Monitor {
 	if w.canvas.Get("requestFullscreen") != nil {
 		return []*engine.Monitor{
-			engine.NewMonitor("Fullscreen", int(1)),
-			engine.NewMonitor("Browser", int(0)),
+			engine.NewMonitor("Fullscreen", fullscreen),
+			engine.NewMonitor("Browser", browser),
 		}
 	}
 	return []*engine.Monitor{
-		engine.NewMonitor("Browser", int(0)),
+		engine.NewMonitor("Browser", browser),
 	}
 }
 
+type monitor int
+
+const (
+	browser monitor = iota
+	fullscreen
+)
+
 func (w *webglengine) GetModes(m interface{}) []engine.Mode {
-	t, ok := m.(int)
+	t, ok := m.(monitor)
 	if !ok {
 		return nil
 	}
 	screen := js.Global.Get("screen")
 	var width, height int
-	if t == 0 {
+	if t == browser {
 		width = screen.Get("availWidth").Int()
 		height = screen.Get("availHeight").Int()
 	} else {
@@ -183,12 +190,12 @@ func (w *webglengine) SetMode(m interface{}, mode engine.Mode) {
 }
 
 func (w *webglengine) SetMonitor(m interface{}) {
-	var monitor int
+	var monitor monitor
 	if m != nil {
 		var ok bool
-		monitor, ok = m.(int)
+		monitor, ok = m.(monitor)
 	}
-	if monitor == 1 {
+	if monitor == fullscreen {
 		if w.canvas.Get("requestFullscreen") != nil {
 			w.canvas.Call("requestFullscreen")
 		}
