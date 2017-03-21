@@ -149,14 +149,16 @@ func (g *glfwengine) GetModes(m interface{}) []engine.Mode {
 	sort.Sort(modes(vm))
 	modes := make([]engine.Mode, len(vm))
 	var lastWidth, lastHeight, lastRefresh, i int
-	for _, mode := range modes {
-		if mode.Width != lastWidth || mode.Height != lastHeight || mode.Refresh != lastRefresh {
+	for _, mode := range vm {
+		modes[i].Width = mode.Width
+		modes[i].Height = mode.Height
+		modes[i].Refresh = mode.RefreshRate
+		if mode.Width != lastWidth || mode.Height != lastHeight || mode.RefreshRate != lastRefresh {
 			lastWidth = mode.Width
 			lastHeight = mode.Height
-			lastRefresh = mode.Refresh
+			lastRefresh = mode.RefreshRate
 			i++
 		}
-		modes[i] = mode
 	}
 	return modes[:i:i]
 }
