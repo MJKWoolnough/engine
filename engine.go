@@ -30,7 +30,9 @@ type Mode struct {
 }
 
 type window interface {
-	Loop(Config, func(int, int, float64)) error
+	Init(Config) error
+	Loop(func(int, int, float64))
+	Uninit() error
 	GetMonitors() []*Monitor
 	GetModes(interface{}) []Mode
 	SetMode(interface{}, Mode)
@@ -38,8 +40,8 @@ type window interface {
 }
 
 type graphics interface {
-	Init() error
-	Uninit() error
+	GLInit() error
+	GLUninit() error
 }
 
 type Sound interface {
@@ -64,7 +66,7 @@ type text interface {
 
 type none struct{}
 
-func (none) Loop(Config, func(int, int, float64)) error {
+func (none) Loop(func(int, int, float64)) {
 	panic(noEngine)
 }
 
@@ -84,11 +86,19 @@ func (none) Close() {
 	panic(noEngine)
 }
 
-func (none) Init() error {
+func (none) Init(Config) error {
 	panic(noEngine)
 }
 
 func (none) Uninit() error {
+	panic(noEngine)
+}
+
+func (none) GLInit() error {
+	panic(noEngine)
+}
+
+func (none) GLUninit() error {
 	panic(noEngine)
 }
 
@@ -161,20 +171,28 @@ func RegisterText(t text) {
 	}
 }
 
-func Loop(c Config, run func(int, int, float64)) error {
-	return registeredWindow.Loop(c, run)
+func Loop(run func(int, int, float64)) {
+	registeredWindow.Loop(run)
 }
 
 func Close() {
 	registeredWindow.Close()
 }
 
+func Init(c Config) error {
+	return registeredWindow.Init(c)
+}
+
+func Uninit() error {
+	return registeredWindow.Uninit()
+}
+
 func GLInit() error {
-	return registeredGraphics.Init()
+	return registeredGraphics.GLInit()
 }
 
 func GLUninit() error {
-	return registeredGraphics.Uninit()
+	return registeredGraphics.GLUninit()
 }
 
 func GetMonitors() []*Monitor {

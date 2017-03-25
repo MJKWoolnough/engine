@@ -1,8 +1,8 @@
-package gles2
+package gl33
 
 import (
 	"github.com/MJKWoolnough/engine"
-	"github.com/go-gl/gl/v3.1/gles2"
+	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
 func init() {
@@ -12,7 +12,7 @@ func init() {
 type glengine struct{}
 
 func (glengine) GLInit() error {
-	return gles2.Init()
+	return gl.Init()
 }
 
 func (glengine) GLUninit() error {

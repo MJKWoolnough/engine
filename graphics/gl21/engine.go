@@ -11,10 +11,10 @@ func init() {
 
 type glengine struct{}
 
-func (glengine) Init() error {
+func (glengine) GLInit() error {
 	return gl.Init()
 }
 
-func (glengine) Uninit() error {
+func (glengine) GLUninit() error {
 	return nil
 }

@@ -34,13 +34,12 @@ type webglengine struct {
 	keys           map[string]struct{}
 }
 
-func (w *webglengine) Loop(c engine.Config, run func(int, int, float64)) error {
-
+func (w *webglengine) Init(c engine.Config) error {
 	canvas := xdom.Canvas()
 	canvas.Width = c.Width
 	canvas.Height = c.Height
 	canvas.SetTabIndex(1)
-	ctx, err := webgl.NewContext(canvas)
+	ctx, err := webgl.NewContext(canvas.Underlying(), &webgl.ContextAttributes{})
 
 	if err != nil {
 		return err
@@ -54,11 +53,10 @@ func (w *webglengine) Loop(c engine.Config, run func(int, int, float64)) error {
 
 	w.canvas = canvas
 	w.context = ctx
-	w.fn = run
 
 	canvas.AddEventListener("mousemove", false, func(m dom.Event) {
-		w.mouseX = m.Underlying().Get("clientX").Int()
-		w.mouseY = m.Underlying().Get("clientY").Int()
+		w.mouseX = m.Underlying().Get("clientX").Float()
+		w.mouseY = m.Underlying().Get("clientY").Float()
 		m.StopPropagation()
 		m.PreventDefault()
 	})
@@ -96,16 +94,27 @@ func (w *webglengine) Loop(c engine.Config, run func(int, int, float64)) error {
 
 	canvas.AddEventListener("keydown", false, kb(true))
 	canvas.AddEventListener("keyup", false, kb(false))
+	return nil
+}
 
+func (w *webglengine) Loop(run func(int, int, float64)) {
+	w.fn = run
 	w.rafID = raf.Invoke(w.loop).Int()
+}
+
+func (w *webglengine) Uninit() error {
+	p := w.canvas.ParentNode()
+	if p != nil {
+		p.RemoveChild(w.canvas)
+	}
+	w.canvas = nil
+	w.context = nil
+	return nil
 }
 
 func (w *webglengine) Close() {
 	uraf.Invoke(w.rafID)
-	xjs.Body().RemoveChild(w.canvas)
-	w.canvas = nil
 	w.rafID = 0
-	w.context = nil
 }
 
 func (w *webglengine) loop(t float64) { // DOMHighResTimeStamp ??
@@ -138,7 +147,7 @@ func (w *webglengine) CursorPos() (x, y float64) {
 }
 
 func (w *webglengine) Context() *webgl.Context {
-	return w.Context
+	return w.context
 }
 
 func (w *webglengine) GetMonitors() []*engine.Monitor {
@@ -190,12 +199,11 @@ func (w *webglengine) SetMode(m interface{}, mode engine.Mode) {
 }
 
 func (w *webglengine) SetMonitor(m interface{}) {
-	var monitor monitor
+	var mon monitor
 	if m != nil {
-		var ok bool
-		monitor, ok = m.(monitor)
+		mon, _ = m.(monitor)
 	}
-	if monitor == fullscreen {
+	if mon == fullscreen {
 		if w.canvas.Get("requestFullscreen") != nil {
 			w.canvas.Call("requestFullscreen")
 		}
