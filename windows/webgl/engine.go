@@ -32,6 +32,7 @@ type webglengine struct {
 	rafID          int
 	mouseX, mouseY float64
 	keys           map[string]struct{}
+	closer         chan struct{}
 }
 
 func (w *webglengine) Init(c engine.Config) error {
@@ -100,6 +101,9 @@ func (w *webglengine) Init(c engine.Config) error {
 func (w *webglengine) Loop(run func(int, int, float64)) {
 	w.fn = run
 	w.rafID = raf.Invoke(w.loop).Int()
+	w.closer = make(chan struct{})
+	<-w.closer
+	w.closer = nil
 }
 
 func (w *webglengine) Uninit() error {
@@ -115,6 +119,9 @@ func (w *webglengine) Uninit() error {
 func (w *webglengine) Close() {
 	uraf.Invoke(w.rafID)
 	w.rafID = 0
+	if w.closer != nil {
+		close(w.closer)
+	}
 }
 
 func (w *webglengine) loop(t float64) { // DOMHighResTimeStamp ??
