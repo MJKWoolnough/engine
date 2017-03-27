@@ -18,3 +18,7 @@ func (glengine) GLInit() error {
 func (glengine) GLUninit() error {
 	return nil
 }
+
+func (glendine) ID() string {
+	return "GLv2.1"
+}

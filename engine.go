@@ -42,6 +42,7 @@ type window interface {
 type graphics interface {
 	GLInit() error
 	GLUninit() error
+	ID() string
 }
 
 type Sound interface {
@@ -100,6 +101,10 @@ func (none) GLInit() error {
 
 func (none) GLUninit() error {
 	panic(noEngine)
+}
+
+func (none) ID() string {
+	return "NONE"
 }
 
 func (none) KeyPressed(Key) bool {
@@ -193,6 +198,10 @@ func GLInit() error {
 
 func GLUninit() error {
 	return registeredGraphics.GLUninit()
+}
+
+func GLID() string {
+	return registeredGraphics.ID()
 }
 
 func GetMonitors() []*Monitor {
