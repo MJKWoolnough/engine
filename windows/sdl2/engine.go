@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 
 	"github.com/MJKWoolnough/engine"
+	_ "github.com/MJKWoolnough/engine/input/sdl2"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -14,7 +15,6 @@ type sdlengine struct {
 	context  *sdl.GLContext
 	renderer *sdl.Renderer
 	quit     uint32
-	keys     [256]bool
 }
 
 func init() {
@@ -24,7 +24,6 @@ func init() {
 	}
 	s := new(sdlengine)
 	engine.RegisterWindow(s)
-	engine.RegisterInput(s)
 }
 
 func (s *sdlengine) Init(c engine.Config) error {
@@ -81,7 +80,7 @@ func (s *sdlengine) Init(c engine.Config) error {
 
 func (s *sdlengine) Loop(run func(int, int, float64)) {
 	for atomic.LoadUint32(&s.quit) == 0 {
-		s.Poll()
+		engine.PollInput()
 		w, h := s.window.GetSize()
 		t := float64(sdl.GetTicks()) / 1000
 		run(w, h, t)
@@ -174,44 +173,4 @@ func (s *sdlengine) SetMode(m interface{}, mode engine.Mode) {
 		_ = mon
 	}
 	//s.window.SetDisplayMode
-}
-
-func (s *sdlengine) Poll() {
-	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-		switch e := e.(type) {
-		case *sdl.KeyDownEvent:
-			s.setKey(e.Keysym, true)
-		case *sdl.KeyUpEvent:
-			s.setKey(e.Keysym, false)
-		case *sdl.MouseButtonEvent:
-			s.setMouse(e.Button, e.State == sdl.PRESSED)
-			//case sdl.MouseMotionEvent:
-		}
-	}
-}
-
-func (s *sdlengine) KeyPressed(k engine.Key) bool {
-	return s.keys[k]
-}
-
-func (s *sdlengine) CursorPos() (float64, float64) {
-	x, y, _ := sdl.GetMouseState()
-	return float64(x), float64(y)
-}
-
-func (s *sdlengine) setKey(k sdl.Keysym, down bool) {
-	switch k.Sym {
-	case sdl.K_ESCAPE:
-		s.keys[engine.KeyEscape] = down
-	}
-}
-
-func (s *sdlengine) setMouse(b uint8, down bool) {
-	switch b {
-	case sdl.BUTTON_LEFT:
-	case sdl.BUTTON_RIGHT:
-	case sdl.BUTTON_MIDDLE:
-	case sdl.BUTTON_X1:
-	case sdl.BUTTON_X2:
-	}
 }
