@@ -10,10 +10,11 @@ import (
 )
 
 type sdlengine struct {
-	window  *sdl.Window
-	context *sdl.GLContext
-	quit    uint32
-	keys    [256]bool
+	window   *sdl.Window
+	context  *sdl.GLContext
+	renderer *sdl.Renderer
+	quit     uint32
+	keys     [256]bool
 }
 
 func init() {
@@ -67,6 +68,12 @@ func (s *sdlengine) Init(c engine.Config) error {
 		if err = sdl.GL_SetSwapInterval(1); err != nil {
 			return err
 		}
+	} else {
+		renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC)
+		if err != nil {
+			return err
+		}
+		s.renderer = renderer
 	}
 	s.window = window
 	return engine.GLInit()
@@ -90,8 +97,9 @@ func (s *sdlengine) Loop(run func(int, int, float64)) {
 		run(w, h, t)
 		if s.context != nil {
 			sdl.GL_SwapWindow(s.window)
+		} else {
+			s.renderer.Present()
 		}
-		sdl.Delay(10)
 	}
 }
 
