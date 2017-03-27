@@ -140,6 +140,8 @@ var keyMap = map[engine.Key]string{
 	engine.KeyRight:    "ArrowRight",
 }
 
+func (w *webglengine) Poll() {}
+
 func (w *webglengine) KeyPressed(k engine.Key) bool {
 	kn, ok := keyMap[k]
 	if !ok {

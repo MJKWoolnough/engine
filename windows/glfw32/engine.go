@@ -79,6 +79,8 @@ func (g *glfwengine) Close() {
 	g.window.SetShouldClose(true)
 }
 
+func (g *glfwengine) Poll() {}
+
 func (g *glfwengine) KeyPressed(k engine.Key) bool {
 	if mk, ok := mouseMap[k]; ok {
 		return g.window.GetMouseButton(mk) == glfw.Press

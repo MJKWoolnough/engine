@@ -70,6 +70,8 @@ func (g *glutengine) SetMode(monitor interface{}, mode engine.Mode) {
 
 }
 
+func (g *glutengine) Poll() {}
+
 func (g *glutengine) CursorPos() (x, y float64) {
 	return 0, 0
 }

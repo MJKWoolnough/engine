@@ -81,17 +81,7 @@ func (s *sdlengine) Init(c engine.Config) error {
 
 func (s *sdlengine) Loop(run func(int, int, float64)) {
 	for atomic.LoadUint32(&s.quit) == 0 {
-		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-			switch e := e.(type) {
-			case *sdl.KeyDownEvent:
-				s.setKey(e.Keysym, true)
-			case *sdl.KeyUpEvent:
-				s.setKey(e.Keysym, false)
-			case *sdl.MouseButtonEvent:
-				s.setMouse(e.Button, e.State == sdl.PRESSED)
-				//case sdl.MouseMotionEvent:
-			}
-		}
+		s.Poll()
 		w, h := s.window.GetSize()
 		t := float64(sdl.GetTicks()) / 1000
 		run(w, h, t)
@@ -184,6 +174,20 @@ func (s *sdlengine) SetMode(m interface{}, mode engine.Mode) {
 		_ = mon
 	}
 	//s.window.SetDisplayMode
+}
+
+func (s *sdlengine) Poll() {
+	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
+		switch e := e.(type) {
+		case *sdl.KeyDownEvent:
+			s.setKey(e.Keysym, true)
+		case *sdl.KeyUpEvent:
+			s.setKey(e.Keysym, false)
+		case *sdl.MouseButtonEvent:
+			s.setMouse(e.Button, e.State == sdl.PRESSED)
+			//case sdl.MouseMotionEvent:
+		}
+	}
 }
 
 func (s *sdlengine) KeyPressed(k engine.Key) bool {
