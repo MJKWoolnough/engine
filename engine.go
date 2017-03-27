@@ -57,6 +57,7 @@ type Font interface {
 }
 
 type input interface {
+	Poll()
 	KeyPressed(Key) bool
 	CursorPos() (float64, float64)
 }
@@ -105,6 +106,10 @@ func (none) GLUninit() error {
 
 func (none) ID() string {
 	return "NONE"
+}
+
+func (none) Poll() {
+	panic(noEngine)
 }
 
 func (none) KeyPressed(Key) bool {
@@ -214,6 +219,10 @@ func SetMode(m *Monitor, mode Mode) {
 		data = m.data
 	}
 	registeredWindow.SetMode(data, mode)
+}
+
+func PollInput() {
+	RegisterInput.Poll()
 }
 
 func KeyPressed(k Key) bool {
