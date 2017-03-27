@@ -222,7 +222,7 @@ func SetMode(m *Monitor, mode Mode) {
 }
 
 func PollInput() {
-	RegisterInput.Poll()
+	registeredInput.Poll()
 }
 
 func KeyPressed(k Key) bool {
