@@ -21,6 +21,7 @@ func init() {
 	uraf = js.Global.Get("cancelAnimationFrame")
 	if raf != nil {
 		engine.RegisterWindow(&Instance)
+		engine.RegisterGraphics(&Instance)
 		engine.RegisterInput(&Instance)
 	}
 }
@@ -35,7 +36,7 @@ type webglengine struct {
 	closer         chan struct{}
 }
 
-func (w *webglengine) Init(c engine.Config) error {
+func (w *webglengine) WindowInit(c engine.Config) error {
 	canvas := xdom.Canvas()
 	canvas.Width = c.Width
 	canvas.Height = c.Height
@@ -106,7 +107,7 @@ func (w *webglengine) Loop(run func(int, int, float64)) {
 	w.closer = nil
 }
 
-func (w *webglengine) Uninit() error {
+func (w *webglengine) WindowUninit() error {
 	p := w.canvas.ParentNode()
 	if p != nil {
 		p.RemoveChild(w.canvas)
@@ -140,7 +141,23 @@ var keyMap = map[engine.Key]string{
 	engine.KeyRight:    "ArrowRight",
 }
 
+func (w *webglengine) GLInit() error {
+	return nil
+}
+
+func (w *webglengine) GLUninit() error {
+	return nil
+}
+
 func (w *webglengine) Poll() {}
+
+func (w *webglengine) InputInit() error {
+	return nil
+}
+
+func (w *webglengine) InputUninit() error {
+	return nil
+}
 
 func (w *webglengine) KeyPressed(k engine.Key) bool {
 	kn, ok := keyMap[k]

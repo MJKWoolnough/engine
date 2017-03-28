@@ -26,7 +26,7 @@ func init() {
 	engine.RegisterWindow(s)
 }
 
-func (s *sdlengine) Init(c engine.Config) error {
+func (s *sdlengine) WindowInit(c engine.Config) error {
 	graphicsID := engine.GLID()
 	var (
 		flags uint32
@@ -75,7 +75,7 @@ func (s *sdlengine) Init(c engine.Config) error {
 		s.renderer = renderer
 	}
 	s.window = window
-	return engine.GLInit()
+	return nil
 }
 
 func (s *sdlengine) Loop(run func(int, int, float64)) {
@@ -96,11 +96,7 @@ func (s *sdlengine) Close() {
 	atomic.StoreUint32(&s.quit, 1)
 }
 
-func (s *sdlengine) Uninit() error {
-	err := engine.GLUninit()
-	if err != nil {
-		return err
-	}
+func (s *sdlengine) WindowUninit() error {
 	if s.context != nil {
 		sdl.GL_DeleteContext(*s.context)
 	}

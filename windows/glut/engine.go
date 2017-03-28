@@ -22,7 +22,7 @@ func init() {
 	glut.Init()
 }
 
-func (g *glutengine) Init(c engine.Config) error {
+func (g *glutengine) WindowInit(c engine.Config) error {
 	g.width = c.Width
 	g.height = c.Height
 	glut.InitDisplayMode(glut.DOUBLE | glut.RGBA)
@@ -39,7 +39,7 @@ func (g *glutengine) Init(c engine.Config) error {
 	glut.IgnoreKeyRepeat(1)
 	glut.MouseFunc(g.mouse)
 	glut.ReshapeFunc(g.reshape)
-	return engine.GLInit()
+	return nil
 }
 
 func (g *glutengine) Loop(run func(int, int, float64)) {
@@ -52,8 +52,8 @@ func (g *glutengine) Close() {
 	g.window = 0
 }
 
-func (g *glutengine) Uninit() error {
-	return engine.GLUninit()
+func (g *glutengine) WindowUninit() error {
+	return nil
 }
 
 func (g *glutengine) GetMonitors() []*engine.Monitor {
@@ -71,6 +71,14 @@ func (g *glutengine) SetMode(monitor interface{}, mode engine.Mode) {
 }
 
 func (g *glutengine) Poll() {}
+
+func (g *glutengine) InputInit() error {
+	return nil
+}
+
+func (g *glutengine) InputUninit() error {
+	return nil
+}
 
 func (g *glutengine) CursorPos() (x, y float64) {
 	return 0, 0

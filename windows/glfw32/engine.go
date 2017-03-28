@@ -36,7 +36,7 @@ var mouseMap = map[engine.Key]glfw.MouseButton{
 	engine.MouseRight:  glfw.MouseButtonRight,
 }
 
-func (g *glfwengine) Init(c engine.Config) error {
+func (g *glfwengine) WindowInit(c engine.Config) error {
 	var monitor *glfw.Monitor
 	if c.Monitor != nil {
 		if m, ok := c.Monitor.Data().(*glfw.Monitor); ok {
@@ -52,7 +52,7 @@ func (g *glfwengine) Init(c engine.Config) error {
 	window.MakeContextCurrent()
 	glfw.SwapInterval(1)
 
-	return engine.GLInit()
+	return nil
 }
 
 func (g *glfwengine) Loop(run func(int, int, float64)) {
@@ -65,10 +65,7 @@ func (g *glfwengine) Loop(run func(int, int, float64)) {
 	}
 }
 
-func (g *glfwengine) Uninit() error {
-	if err := engine.GLUninit(); err != nil {
-		return err
-	}
+func (g *glfwengine) WindowUninit() error {
 	g.window.Destroy()
 	g.window = nil
 	glfw.Terminate()
@@ -77,6 +74,14 @@ func (g *glfwengine) Uninit() error {
 
 func (g *glfwengine) Close() {
 	g.window.SetShouldClose(true)
+}
+
+func (g *glfwengine) InputInit() error {
+	return nil
+}
+
+func (g *glfwengine) InputUninit() error {
+	return nil
 }
 
 func (g *glfwengine) Poll() {}
