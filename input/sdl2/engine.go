@@ -21,6 +21,15 @@ func init() {
 	engine.RegisterInput(new(sdlengine))
 }
 
+func (s *sdlengine) InputInit() error {
+	return nil
+}
+
+func (s *sdlengine) InputUninit() error {
+	sdl.QuitSubSystem(eventSubsystem)
+	return nil
+}
+
 func (s *sdlengine) Poll() {
 	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 		switch e := e.(type) {
@@ -33,10 +42,6 @@ func (s *sdlengine) Poll() {
 			//case sdl.MouseMotionEvent:
 		}
 	}
-}
-
-func (s *sdlengine) Close() {
-	sdl.QuitSubSystem(eventSubsystem)
 }
 
 func (s *sdlengine) KeyPressed(k engine.Key) bool {
