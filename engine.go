@@ -30,9 +30,9 @@ type Mode struct {
 }
 
 type window interface {
-	Init(Config) error
+	WindowInit(Config) error
 	Loop(func(int, int, float64))
-	Uninit() error
+	WindowUninit() error
 	GetMonitors() []*Monitor
 	GetModes(interface{}) []Mode
 	SetMode(interface{}, Mode)
@@ -60,72 +60,12 @@ type input interface {
 	Poll()
 	KeyPressed(Key) bool
 	CursorPos() (float64, float64)
+	InputInit() error
+	InputUninit() error
 }
 
 type text interface {
 	LoadFont(io.Reader) Font
-}
-
-type none struct{}
-
-func (none) Loop(func(int, int, float64)) {
-	panic(noEngine)
-}
-
-func (none) GetMonitors() []*Monitor {
-	panic(noEngine)
-}
-
-func (none) GetModes(interface{}) []Mode {
-	panic(noEngine)
-}
-
-func (none) SetMode(interface{}, Mode) {
-	panic(noEngine)
-}
-
-func (none) Close() {
-	panic(noEngine)
-}
-
-func (none) Init(Config) error {
-	panic(noEngine)
-}
-
-func (none) Uninit() error {
-	panic(noEngine)
-}
-
-func (none) GLInit() error {
-	panic(noEngine)
-}
-
-func (none) GLUninit() error {
-	panic(noEngine)
-}
-
-func (none) ID() string {
-	return "NONE"
-}
-
-func (none) Poll() {
-	panic(noEngine)
-}
-
-func (none) KeyPressed(Key) bool {
-	panic(noEngine)
-}
-
-func (none) CursorPos() (float64, float64) {
-	panic(noEngine)
-}
-
-func (none) Play(Sound) {
-	panic(noEngine)
-}
-
-func (none) LoadFont(io.Reader) Font {
-	panic(noEngine)
 }
 
 var (
@@ -190,19 +130,29 @@ func Close() {
 }
 
 func Init(c Config) error {
-	return registeredWindow.Init(c)
+	if err := registeredWindow.WindowInit(c); err != nil {
+		return err
+	}
+	if err := registeredGraphics.GLInit(); err != nil {
+		return err
+	}
+	if err := registeredInput.InputInit(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func Uninit() error {
-	return registeredWindow.Uninit()
-}
-
-func GLInit() error {
-	return registeredGraphics.GLInit()
-}
-
-func GLUninit() error {
-	return registeredGraphics.GLUninit()
+	if err := registeredInput.InputUninit(); err != nil {
+		return err
+	}
+	if err := registeredGraphics.GLUninit(); err != nil {
+		return err
+	}
+	if err := registeredWindow.WindowUninit(c); err != nil {
+		return err
+	}
+	return nil
 }
 
 func GLID() string {
