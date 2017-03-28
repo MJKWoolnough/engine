@@ -4,6 +4,30 @@ import "io"
 
 type none struct{}
 
+func (none) WindowInit(Config) error {
+	return nil
+}
+
+func (none) WindowUninit() error {
+	return nil
+}
+
+func (none) GLInit() error {
+	return nil
+}
+
+func (none) GLUninit() error {
+	return nil
+}
+
+func (none) InputInit() error {
+	return nil
+}
+
+func (none) InputUninit() error {
+	return nil
+}
+
 func (none) Loop(func(int, int, float64)) {}
 
 func (none) GetMonitors() []*Monitor {
@@ -17,22 +41,6 @@ func (none) GetModes(interface{}) []Mode {
 func (none) SetMode(interface{}, Mode) {}
 
 func (none) Close() {}
-
-func (none) WindowInit(Config) error {
-	return nil
-}
-
-func (none) Uninit() error {
-	return nil
-}
-
-func (none) GLInit() error {
-	return nil
-}
-
-func (none) GLUninit() error {
-	return nil
-}
 
 func (none) ID() string {
 	return "NONE"

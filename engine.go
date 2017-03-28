@@ -149,7 +149,7 @@ func Uninit() error {
 	if err := registeredGraphics.GLUninit(); err != nil {
 		return err
 	}
-	if err := registeredWindow.WindowUninit(c); err != nil {
+	if err := registeredWindow.WindowUninit(); err != nil {
 		return err
 	}
 	return nil
