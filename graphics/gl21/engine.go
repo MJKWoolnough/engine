@@ -19,6 +19,6 @@ func (glengine) GLUninit() error {
 	return nil
 }
 
-func (glendine) ID() string {
+func (glengine) ID() string {
 	return "GLv2.1"
 }
