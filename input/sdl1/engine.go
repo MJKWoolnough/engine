@@ -2,7 +2,6 @@ package sdl1
 
 import (
 	"errors"
-	"fmt"
 	"runtime"
 
 	"github.com/MJKWoolnough/engine"
@@ -34,7 +33,6 @@ func (s *sdlengine) InputUninit() error {
 
 func (s *sdlengine) Poll() {
 	for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-		fmt.Printf("%#v\n", e)
 		switch e := e.(type) {
 		case *sdl.KeyboardEvent:
 			s.setKey(e.Keysym, e.State == 1)
