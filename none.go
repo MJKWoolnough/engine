@@ -28,7 +28,7 @@ func (none) InputUninit() error {
 	return nil
 }
 
-func (none) Loop(func(int, int, float64)) {}
+func (none) Loop(func(int, int, float64) bool) {}
 
 func (none) GetMonitors() []*Monitor {
 	return nil
