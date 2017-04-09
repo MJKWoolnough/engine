@@ -78,16 +78,17 @@ func (s *sdlengine) WindowInit(c engine.Config) error {
 	return nil
 }
 
-func (s *sdlengine) Loop(run func(int, int, float64)) {
+func (s *sdlengine) Loop(run func(int, int, float64) bool) {
 	for atomic.LoadUint32(&s.quit) == 0 {
 		engine.PollInput()
 		w, h := s.window.GetSize()
 		t := float64(sdl.GetTicks()) / 1000
-		run(w, h, t)
-		if s.context != nil {
-			sdl.GL_SwapWindow(s.window)
-		} else {
-			s.renderer.Present()
+		if run(w, h, t) {
+			if s.context != nil {
+				sdl.GL_SwapWindow(s.window)
+			} else {
+				s.renderer.Present()
+			}
 		}
 	}
 }

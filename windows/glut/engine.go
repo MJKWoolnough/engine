@@ -10,7 +10,7 @@ import (
 type glutengine struct {
 	window        int
 	width, height int
-	runFunc       func(int, int, float64)
+	runFunc       func(int, int, float64) bool
 	keys          [256]bool
 }
 
@@ -42,7 +42,7 @@ func (g *glutengine) WindowInit(c engine.Config) error {
 	return nil
 }
 
-func (g *glutengine) Loop(run func(int, int, float64)) {
+func (g *glutengine) Loop(run func(int, int, float64) bool) {
 	g.runFunc = run
 	glut.MainLoop()
 }

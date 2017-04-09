@@ -31,7 +31,7 @@ type Mode struct {
 
 type window interface {
 	WindowInit(Config) error
-	Loop(func(int, int, float64))
+	Loop(func(int, int, float64) bool)
 	WindowUninit() error
 	GetMonitors() []*Monitor
 	GetModes(interface{}) []Mode
@@ -121,7 +121,7 @@ func RegisterText(t text) {
 	}
 }
 
-func Loop(run func(int, int, float64)) {
+func Loop(run func(int, int, float64) bool) {
 	registeredWindow.Loop(run)
 }
 

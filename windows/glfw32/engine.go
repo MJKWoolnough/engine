@@ -55,12 +55,12 @@ func (g *glfwengine) WindowInit(c engine.Config) error {
 	return nil
 }
 
-func (g *glfwengine) Loop(run func(int, int, float64)) {
+func (g *glfwengine) Loop(run func(int, int, float64) bool) {
 	for !g.window.ShouldClose() {
 		width, height := g.window.GetSize()
-		run(width, height, glfw.GetTime())
-
-		g.window.SwapBuffers()
+		if run(width, height, glfw.GetTime()) {
+			g.window.SwapBuffers()
+		}
 		glfw.PollEvents()
 	}
 }

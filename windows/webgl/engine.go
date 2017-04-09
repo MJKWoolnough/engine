@@ -29,7 +29,7 @@ func init() {
 type webglengine struct {
 	canvas         *dom.HTMLCanvasElement
 	context        *webgl.Context
-	fn             func(int, int, float64)
+	fn             func(int, int, float64) bool
 	rafID          int
 	mouseX, mouseY float64
 	keys           map[string]struct{}
@@ -99,7 +99,7 @@ func (w *webglengine) WindowInit(c engine.Config) error {
 	return nil
 }
 
-func (w *webglengine) Loop(run func(int, int, float64)) {
+func (w *webglengine) Loop(run func(int, int, float64) bool) {
 	w.fn = run
 	w.rafID = raf.Invoke(w.loop).Int()
 	w.closer = make(chan struct{})

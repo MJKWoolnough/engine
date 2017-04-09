@@ -48,13 +48,12 @@ func (s *sdlengine) WindowInit(c engine.Config) error {
 	return nil
 }
 
-func (s *sdlengine) Loop(run func(int, int, float64)) {
+func (s *sdlengine) Loop(run func(int, int, float64) bool) {
 	for atomic.LoadUint32(&s.quit) == 0 {
 		engine.PollInput()
 		vi := sdl.GetVideoInfo()
 		t := float64(sdl.GetTicks()) / 1000
-		run(int(vi.Current_w), int(vi.Current_h), t)
-		if s.gl {
+		if run(int(vi.Current_w), int(vi.Current_h), t) && s.gl {
 			sdl.GL_SwapBuffers()
 		}
 	}
