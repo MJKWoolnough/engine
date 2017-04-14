@@ -60,8 +60,10 @@ func (g *glfwengine) Loop(run func(int, int, float64) bool) {
 		width, height := g.window.GetSize()
 		if run(width, height, glfw.GetTime()) {
 			g.window.SwapBuffers()
+			glfw.PollEvents()
+		} else {
+			glfw.WaitEventsTimeout(0.125)
 		}
-		glfw.PollEvents()
 	}
 }
 
