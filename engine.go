@@ -53,7 +53,7 @@ type audio interface {
 }
 
 type Font interface {
-	Render(float64, float64, string)
+	Render(x1, y1, x2, y2 float64, text string)
 }
 
 type input interface {
@@ -65,7 +65,9 @@ type input interface {
 }
 
 type text interface {
-	LoadFont(io.Reader) Font
+	TextInit() error
+	TextUninit() error
+	LoadFont(glyphs []float32, points []int) (Font, error)
 }
 
 var (
@@ -139,10 +141,16 @@ func Init(c Config) error {
 	if err := registeredInput.InputInit(); err != nil {
 		return err
 	}
+	if err := registeredText.TextInit(); err != nil {
+		return err
+	}
 	return nil
 }
 
 func Uninit() error {
+	if err := registeredText.TextUninit(); err != nil {
+		return err
+	}
 	if err := registeredInput.InputUninit(); err != nil {
 		return err
 	}
