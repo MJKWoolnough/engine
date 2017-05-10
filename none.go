@@ -58,6 +58,10 @@ func (none) CursorPos() (float64, float64) {
 
 func (none) Play(Sound) {}
 
+func (none) TextInit() error {
+	return nil
+}
+
 func (none) LoadFont(io.Reader) Font {
 	return nil
 }
