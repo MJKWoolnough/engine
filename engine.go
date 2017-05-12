@@ -53,6 +53,7 @@ type audio interface {
 }
 
 type Font interface {
+	Length(string) uint
 	Render(x1, y1, x2, y2 float64, text string)
 }
 
