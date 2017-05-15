@@ -62,6 +62,10 @@ func (none) TextInit() error {
 	return nil
 }
 
-func (none) LoadFont(io.Reader) Font {
+func (none) TextUninit() error {
 	return nil
+}
+
+func (none) LoadFont(io.Reader) (Font, error) {
+	return nil, nil
 }

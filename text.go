@@ -34,8 +34,8 @@ func DecodeTTF(r io.Reader, start, end rune) (*TTF, error) {
 		v VertexBuilder
 	)
 	pos := make([][2]int, 0, end-start+1)
-	advances := make([]fixed.Int26_6, 0, end-start+1)
-	boxes := make([]fixed.Rectangle26_6, 0, end-start+1)
+	advances := make([]float32, 0, end-start+1)
+	boxes := make([][4]float32, 0, end-start+1)
 
 	for r := start; r <= end; r++ {
 		err = g.Load(f, em, f.Index(r), font.HintingNone)
@@ -71,7 +71,7 @@ func DecodeTTF(r io.Reader, start, end rune) (*TTF, error) {
 			}
 			prevPos += e
 		}
-		pos = append(pos, [2]int{first, len(v.Vertices) - firstPos})
+		pos = append(pos, [2]int{firstPos, len(v.Vertices) - firstPos})
 	}
 
 	return &TTF{
@@ -83,14 +83,14 @@ func DecodeTTF(r io.Reader, start, end rune) (*TTF, error) {
 }
 
 type VertexBuilder struct {
-	start, current [2]fixed.Point26_6
+	start, current [2]fixed.Int26_6
 	count          int
 	Vertices       []float32
 }
 
-func (v *VertexBuilder) MoveTo(point fixed.Point26_6) {
-	v.start = [2]fixed.Point26_6{x, y}
-	v.current = g.start
+func (v *VertexBuilder) MoveTo(x, y fixed.Int26_6) {
+	v.start = [2]fixed.Int26_6{x, y}
+	v.current = v.start
 	v.count = 0
 }
 
@@ -104,7 +104,7 @@ func (v *VertexBuilder) LineTo(x, y fixed.Int26_6) {
 }
 
 func (v *VertexBuilder) CurveTo(cx, cy, x, y fixed.Int26_6) {
-	g.count++
+	v.count++
 	if v.count >= 2 {
 		v.addTriangle(v.start[0], v.start[1], v.current[0], v.current[1], x, y)
 	}
@@ -113,18 +113,18 @@ func (v *VertexBuilder) CurveTo(cx, cy, x, y fixed.Int26_6) {
 	v.current[1] = y
 }
 
-func (v *VertexBuilder) addTriangle(ax, ay, bx, by, cx, cy fixed.Point26_6) {
+func (v *VertexBuilder) addTriangle(ax, ay, bx, by, cx, cy fixed.Int26_6) {
 	v.addVertex(ax, ay, 0, 1)
 	v.addVertex(bx, by, 0, 1)
 	v.addVertex(cx, cy, 0, 1)
 }
 
-func (v *VertexBuilder) addCurve(ax, ay, bx, by, cx, cy fixed.Point26_6) {
+func (v *VertexBuilder) addCurve(ax, ay, bx, by, cx, cy fixed.Int26_6) {
 	v.addVertex(ax, ay, 0, 0)
 	v.addVertex(bx, by, 0.5, 0)
 	v.addVertex(cx, cy, 1, 1)
 }
 
-func (v *VertexBuilder) addVertex(x, y fixed.Point26_6, s, t float32) {
-	v.vertices = append(v.vertices, float32(x)/em, float32(y)/em, s, t)
+func (v *VertexBuilder) addVertex(x, y fixed.Int26_6, s, t float32) {
+	v.Vertices = append(v.Vertices, float32(x)/em, float32(y)/em, s, t)
 }

@@ -68,7 +68,7 @@ type input interface {
 type text interface {
 	TextInit() error
 	TextUninit() error
-	LoadFont(glyphs []float32, points []int) (Font, error)
+	LoadFont(io.Reader) (Font, error)
 }
 
 var (
@@ -196,6 +196,6 @@ func PlaySound(s Sound) {
 	registeredAudio.Play(s)
 }
 
-func LoadFont(r io.Reader) Font {
+func LoadFont(r io.Reader) (Font, error) {
 	return registeredText.LoadFont(r)
 }
