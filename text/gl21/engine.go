@@ -1,20 +1,67 @@
 package gl21
 
-import "github.com/MJKWoolnough/engine"
+import (
+	"io"
+	"unsafe"
+
+	"github.com/MJKWoolnough/engine"
+	graphics "github.com/MJKWoolnough/engine/graphics/gl21"
+	"github.com/go-gl/gl/v2.1/gl"
+)
 
 func init() {
 
 }
 
 type glengine struct {
+	shader                 *graphics.Program
+	transform, colour, pos int32
 }
 
 func (g *glengine) Init() error {
+	var err error
+	g.shader, err = graphics.NewProgram(glyphVertexShader, glyphFragmentShader)
+	if err != nil {
+		return err
+	}
+	g.transform, err = glyphShader.GetUniformLocation("transform")
+	if err != nil {
+		return err
+	}
+	g.colour, err = glyphShader.GetUniformLocation("colour")
+	if err != nil {
+		return err
+	}
+	g.pos, err = glyphShader.GetAttribLocation("pos")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *glengine) Uninit() error {
 	return nil
 }
 
-func (g *glengine) LoadFont(glyphs, advances []float32, points []int, areas [][4]float32, first rune) (engine.Font, error) {
+func (g *glengine) LoadFont(r io.Reader) (engine.Font, error) {
+	t, err := engine.DecodeTTF(r, ' ', '~')
+	if err != nil {
+		return nil, err
+	}
+
+	var vb uint32
+	gl.GenBuffers(1, &vb)
+	gl.BindBuffer(gl.ARRAY_BUFFER, vb)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, vb)
+	gl.BufferData(gl.ARRAY_BUFFER, len(t.Coords)*int(unsafe.Sizeof(t.Coords[0])), unsafe.Pointer(&t.Coords[0]), gl.STATIC_DRAW)
+
+	// do frame buffer stuff
+
+	return &font{
+		engine:       g,
+		vertexBuffer: vb,
+		first:        ' ',
+		advances:     t.Advances,
+		points:       t.Pos,
+	}
 }
