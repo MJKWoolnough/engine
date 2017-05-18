@@ -41,3 +41,15 @@ func (f *font) Render(x1, y1, x2, y2 float64, text string) {
 	}
 	f.engine.shader.Use()
 }
+
+func (f *font) Length(text string) float32 {
+	var length float32
+	for _, g := range text {
+		i := g - f.first
+		if i < 0 || i >= len(f.points) {
+			continue
+		}
+		length += f.advances[i]
+	}
+	return length
+}
