@@ -69,7 +69,7 @@ func DecodeTTF(r io.Reader, start, end rune) (*TTF, error) {
 				}
 				lastPoint = point
 			}
-			prevPos += e
+			prevPos = e
 		}
 		pos = append(pos, [2]int{firstPos, len(v.Vertices) - firstPos})
 	}
