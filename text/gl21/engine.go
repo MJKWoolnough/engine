@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-
+	engine.RegisterText(new(glengine))
 }
 
 type glengine struct {
@@ -18,28 +18,28 @@ type glengine struct {
 	transform, colour, pos int32
 }
 
-func (g *glengine) Init() error {
+func (g *glengine) TextInit() error {
 	var err error
 	g.shader, err = graphics.NewProgram(glyphVertexShader, glyphFragmentShader)
 	if err != nil {
 		return err
 	}
-	g.transform, err = glyphShader.GetUniformLocation("transform")
+	g.transform, err = g.shader.GetUniformLocation("transform")
 	if err != nil {
 		return err
 	}
-	g.colour, err = glyphShader.GetUniformLocation("colour")
+	g.colour, err = g.shader.GetUniformLocation("colour")
 	if err != nil {
 		return err
 	}
-	g.pos, err = glyphShader.GetAttribLocation("pos")
+	g.pos, err = g.shader.GetAttribLocation("pos")
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g *glengine) Uninit() error {
+func (g *glengine) TextUninit() error {
 	return nil
 }
 
@@ -56,12 +56,11 @@ func (g *glengine) LoadFont(r io.Reader) (engine.Font, error) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(t.Coords)*int(unsafe.Sizeof(t.Coords[0])), unsafe.Pointer(&t.Coords[0]), gl.STATIC_DRAW)
 
 	// do frame buffer stuff
-
 	return &font{
 		engine:       g,
 		vertexBuffer: vb,
 		first:        ' ',
 		advances:     t.Advances,
 		points:       t.Pos,
-	}
+	}, nil
 }
