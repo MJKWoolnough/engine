@@ -2,6 +2,7 @@ package glut
 
 import (
 	"runtime"
+	"time"
 
 	"github.com/MJKWoolnough/engine"
 	"github.com/vbsw/glut"
@@ -90,9 +91,10 @@ func (g *glutengine) KeyPressed(key engine.Key) bool {
 
 func (g *glutengine) loop() {
 	t := float64(glut.Get(glut.ELAPSED_TIME)) / 1000
-	g.runFunc(g.width, g.height, t)
-	if g.window > 0 {
+	if g.window > 0 && g.runFunc(g.width, g.height, t) {
 		glut.SwapBuffers()
+	} else {
+		time.Sleep(time.Millisecond * 100)
 	}
 }
 
