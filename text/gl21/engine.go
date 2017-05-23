@@ -14,25 +14,46 @@ func init() {
 }
 
 type glengine struct {
-	shader                 *graphics.Program
-	transform, colour, pos int32
+	glyphs, text                                  *graphics.Program
+	glyphTransform, glyphColour, glyphPos         int32
+	textRect, textColour, textCoords, textTexture int32
 }
 
 func (g *glengine) TextInit() error {
 	var err error
-	g.shader, err = graphics.NewProgram(glyphVertexShader, glyphFragmentShader)
+	g.glyphs, err = graphics.NewProgram(glyphVertexShader, glyphFragmentShader)
 	if err != nil {
 		return err
 	}
-	g.transform, err = g.shader.GetUniformLocation("transform")
+	g.glyphTransform, err = g.glyphs.GetUniformLocation("transform")
 	if err != nil {
 		return err
 	}
-	g.colour, err = g.shader.GetUniformLocation("colour")
+	g.glyphColour, err = g.glyphs.GetUniformLocation("colour")
 	if err != nil {
 		return err
 	}
-	g.pos, err = g.shader.GetAttribLocation("pos")
+	g.glyphPos, err = g.glyphs.GetAttribLocation("pos")
+	if err != nil {
+		return err
+	}
+	g.text, err = graphics.NewProgram(textVertexShader, textFragmentShader)
+	if err != nil {
+		return err
+	}
+	g.textRect, err = g.text.GetUniformLocation("rect")
+	if err != nil {
+		return err
+	}
+	g.textColour, err = g.text.GetUniformLocation("colour")
+	if err != nil {
+		return err
+	}
+	g.textTexture, err = g.text.GetUniformLocation("texture")
+	if err != nil {
+		return err
+	}
+	g.textCoords, err = g.text.GetAttribLocation("coords")
 	if err != nil {
 		return err
 	}
