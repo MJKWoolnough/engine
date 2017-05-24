@@ -27,7 +27,7 @@ func createShader(typ uint32, source *byte, length int32) (uint32, error) {
 	var status int32
 	gl.GetShaderiv(id, gl.COMPILE_STATUS, &status)
 	if status != gl.TRUE {
-		return 0, errors.New(log(id))
+		return 0, errors.New(log(id, gl.GetShaderiv, gl.GetShaderInfoLog))
 	}
 	return id, nil
 }
@@ -57,65 +57,49 @@ func (p *Program) Use() {
 }
 
 func (p *Program) GetUniformLocation(uName string) (int32, error) {
-	name := make([]byte, len(uName)+1)
-	copy(name, uName)
-	r := gl.GetUniformLocation(p.pid, &name[0])
-	if r < 0 {
-		switch gl.GetError() {
-		case gl.INVALID_VALUE:
-			return r, errors.New("Invalid Var: " + uName)
-		case gl.INVALID_OPERATION:
-			return r, errors.New("Invalid Op: " + uName)
-		default:
-			return r, errors.New("Unknown Var: " + uName)
-		}
-	}
-	return r, nil
+	return getLocation(uName, p.pid, gl.GetUniformLocation)
 }
 
 func (p *Program) GetAttribLocation(aName string) (int32, error) {
-	name := make([]byte, len(aName)+1)
-	copy(name, aName)
-	r := gl.GetAttribLocation(p.pid, &name[0])
+	return getLocation(aName, p.pid, gl.GetAttribLocation)
+}
+
+func getLocation(lname string, pid uint32, lf func(uint32, *uint8) int32) (int32, error) {
+	name := make([]byte, len(lName)+1)
+	copy(name, lName)
+	r := lf(pid, &name[0])
 	if r < 0 {
 		switch gl.GetError() {
 		case gl.INVALID_VALUE:
-			return r, errors.New("Invalid Var: " + aName)
+			return r, errors.New("Invalid Var: " + lName)
 		case gl.INVALID_OPERATION:
-			return r, errors.New("Invalid Op: " + aName)
+			return r, errors.New("Invalid Op: " + lName)
 		default:
-			return r, errors.New("Unknown Var: " + aName)
+			return r, errors.New("Unknown Var: " + lName)
 		}
 	}
 	return r, nil
 }
 
 func (p *Program) VertexLog() string {
-	return log(p.vid)
+	return log(p.vid, gl.GetShaderiv, gl.GetShaderInfoLog)
 }
 
 func (p *Program) FragmentLog() string {
-	return log(p.fid)
+	return log(p.fid, gl.GetShaderiv, gl.GetShaderInfoLog)
 }
 
 func (p *Program) ProgramLog() string {
-	var length int32
-	gl.GetProgramiv(p.pid, gl.INFO_LOG_LENGTH, &length)
-	if length == 0 {
-		return ""
-	}
-	buf := make([]byte, length)
-	gl.GetProgramInfoLog(p.pid, length, &length, &buf[0])
-	return string(buf)
+	return log(p.pid, gl.GetProgramiv, gl.GetProgramInfoLog)
 }
 
-func log(id uint32) string {
+func log(id uint32, ll func(uint32, uint32, *int32), lf func(uint32, int32, *int32, *uint8)) string {
 	var length int32
-	gl.GetShaderiv(id, gl.INFO_LOG_LENGTH, &length)
+	ll(id, gl.INFO_LOG_LENGTH, &length)
 	if length == 0 {
 		return ""
 	}
 	buf := make([]byte, length)
-	gl.GetShaderInfoLog(id, length, &length, &buf[0])
+	lf(id, length, &length, &buf[0])
 	return string(buf)
 }
