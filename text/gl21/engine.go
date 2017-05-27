@@ -17,6 +17,7 @@ type glengine struct {
 	glyphs, text                                  *graphics.Program
 	glyphTransform, glyphColour, glyphPos         int32
 	textRect, textColour, textCoords, textTexture int32
+	textFrame                                     uint32
 }
 
 func (g *glengine) TextInit() error {
@@ -57,6 +58,8 @@ func (g *glengine) TextInit() error {
 	if err != nil {
 		return err
 	}
+	gl.GenFramebuffers(1, &g.textFrame)
+	gl.BindFramebuffer(gl.FRAMEBUFFER, g.textFrame)
 	return nil
 }
 
@@ -76,14 +79,9 @@ func (g *glengine) LoadFont(r io.Reader) (engine.Font, error) {
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, vb)
 	gl.BufferData(gl.ARRAY_BUFFER, len(t.Coords)*int(unsafe.Sizeof(t.Coords[0])), unsafe.Pointer(&t.Coords[0]), gl.STATIC_DRAW)
 
-	var fb uint32
-	gl.GenFramebuffers(1, &fb)
-	gl.BindFramebuffer(gl.FRAMEBUFFER, fb)
-
 	// do frame buffer stuff
 	return &font{
 		engine:       g,
-		frameBuffer:  fb,
 		vertexBuffer: vb,
 		first:        ' ',
 		advances:     t.Advances,
