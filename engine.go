@@ -54,7 +54,7 @@ type audio interface {
 
 type Font interface {
 	Length(string) float32
-	Render(x1, y1, x2, y2 float64, text string)
+	Render(transform Transform2D, width, height float64, text string)
 }
 
 type input interface {
