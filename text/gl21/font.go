@@ -18,7 +18,6 @@ var jitter = [...][2]float32{
 
 type font struct {
 	engine       *glengine
-	frameBuffer  uint32
 	vertexBuffer uint32
 	first        rune
 	points       [][2]int
@@ -26,7 +25,7 @@ type font struct {
 	areas        [][4]float32
 }
 
-func (f *font) Render(x1, y1, x2, y2 float64, text string) {
+func (f *font) Render(transform engine.Transform2D, width, height float64, text string) {
 	var longestLine, currLine float32
 	lines := 1
 	for _, g := range text {
@@ -48,11 +47,12 @@ func (f *font) Render(x1, y1, x2, y2 float64, text string) {
 		longestLine = currLine
 	}
 	var (
-		transform engine.Transform2D
-		emH, emV  float32
-		advance   float32
+		emH, emV float32
+		advance  float32
 	)
-	gl.BindFramebuffer(gl.FRAMEBUFFER, f.frameBuffer)
+	gl.BindFramebuffer(gl.FRAMEBUFFER, f.engine.textFrame)
+	gl.ClearColor(0, 0, 0, 0)
+	gl.Clear(gl.COLOR_BUFFER_BIT)
 	gl.BlendFunc(gl.ONE, gl.ONE)
 	gl.BlendEquation(gl.FUNC_SUBTRACT)
 	f.engine.shader.Use()
@@ -79,11 +79,11 @@ func (f *font) Render(x1, y1, x2, y2 float64, text string) {
 			trans.Translate(j[0], j[1])
 			switch n {
 			case 0:
-				gl.Uniform4f(f.engine.colour, 1, 0, 0, 1)
+				gl.Uniform4f(f.engine.glyphColour, 1, 0, 0, 1)
 			case 2:
-				gl.Uniform4f(f.engine.colour, 0, 1, 0, 1)
+				gl.Uniform4f(f.engine.glyphColour, 0, 1, 0, 1)
 			case 4:
-				gl.Uniform4f(f.engine.colour, 0, 0, 1, 1)
+				gl.Uniform4f(f.engine.glyphColour, 0, 0, 1, 1)
 			}
 			gl.UniformMatrix3fv(f.engine.transform, 1, true, &trans[0])
 			gl.DrawArrays(gl.TRIANGLES, 0, nPoints)
@@ -96,7 +96,10 @@ func (f *font) Render(x1, y1, x2, y2 float64, text string) {
 	}
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 	gl.BlendFunc(gl.ZERO, gl.SRC_COLOR)
-
+	gl.Uniform1i(f.engine.textTexture, f.engine.textFrame)
+	gl.Uniform4f(f.engine.textColour, 0, 0, 0, 0)
+	gl.Uniform4f(f.engine.textRect, 0, 0, 0, 0)
+	gl.DrawArrays(gl.TRIANGLE_STRIP, QUAD)
 }
 
 func (f *font) Length(text string) float32 {
