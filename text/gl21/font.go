@@ -29,19 +29,21 @@ func (f *font) Render(transform engine.Transform2D, width, height float64, text 
 	var longestLine, currLine float32
 	lines := 1
 	for _, g := range text {
-		if g == '\n' {
+		switch g {
+		case '\r':
 			if currLine > longestLine {
 				longestLine = currLine
 			}
-			lines++
 			currLine = 0
-			continue
+		case '\n':
+			lines++
+		default:
+			i := int(g - f.first)
+			if i < 0 || i >= len(f.points) {
+				continue
+			}
+			currLine += f.advances[i]
 		}
-		i := int(g - f.first)
-		if i < 0 || i >= len(f.points) {
-			continue
-		}
-		currLine += f.advances[i]
 	}
 	if currLine > longestLine {
 		longestLine = currLine
