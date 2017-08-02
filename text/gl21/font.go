@@ -60,8 +60,12 @@ func (f *font) Render(transform engine.Transform2D, width, height float64, text 
 	f.engine.shader.Use()
 	transform.Scale(emH, emv)
 	for _, g := range text {
-		if g == '\n' {
-			transform.Translate(-advance, emV)
+		if g == '\r' {
+			transform.Translate(-advance, 0)
+			advance = 0
+			continue
+		} else if g == '\n' {
+			transform.Translate(0, emV)
 			continue
 		}
 		i := int(g - f.first)
