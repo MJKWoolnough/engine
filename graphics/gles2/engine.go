@@ -1,8 +1,8 @@
-package gles2
+package gles2 // import "vimagination.zapto.org/engine/graphics/gles2"
 
 import (
-	"github.com/MJKWoolnough/engine"
 	"github.com/go-gl/gl/v3.1/gles2"
+	"vimagination.zapto.org/engine"
 )
 
 func init() {

@@ -3,7 +3,7 @@ package gl21
 import (
 	"unsafe"
 
-	"github.com/MJKWoolnough/engine"
+	"vimagination.zapto.org/engine"
 	"github.com/go-gl/gl/v2.1/gl"
 )
 

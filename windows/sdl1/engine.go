@@ -1,13 +1,13 @@
-package sdl1
+package sdl1 // import "vimagination.zapto.org/engine/windows/sdl1"
 
 import (
 	"runtime"
 	"sort"
 	"sync/atomic"
 
-	"github.com/MJKWoolnough/engine"
-	_ "github.com/MJKWoolnough/engine/input/sdl1"
 	"github.com/banthar/Go-SDL/sdl"
+	"vimagination.zapto.org/engine"
+	_ "vimagination.zapto.org/engine/input/sdl1"
 )
 
 type sdlengine struct {

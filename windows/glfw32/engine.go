@@ -1,11 +1,11 @@
-package glfw32
+package glfw32 // import "vimagination.zapto.org/engine/windows/glfw32"
 
 import (
 	"runtime"
 	"sort"
 
-	"github.com/MJKWoolnough/engine"
 	"github.com/go-gl/glfw/v3.2/glfw"
+	"vimagination.zapto.org/engine"
 )
 
 type glfwengine struct {

@@ -1,11 +1,11 @@
-package glut
+package glut // import "vimagination.zapto.org/engine/windows/glut"
 
 import (
 	"runtime"
 	"time"
 
-	"github.com/MJKWoolnough/engine"
 	"github.com/vbsw/glut"
+	"vimagination.zapto.org/engine"
 )
 
 type glutengine struct {

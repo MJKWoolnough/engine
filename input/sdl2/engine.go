@@ -1,10 +1,10 @@
-package sdl2
+package sdl2 // import "vimagination.zapto.org/engine/input/sdl2"
 
 import (
 	"runtime"
 
-	"github.com/MJKWoolnough/engine"
 	"github.com/veandco/go-sdl2/sdl"
+	"vimagination.zapto.org/engine"
 )
 
 type sdlengine struct {

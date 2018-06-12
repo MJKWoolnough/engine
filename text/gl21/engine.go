@@ -1,12 +1,12 @@
-package gl21
+package gl21 // import "vimagination.zapto.org/engine/text/gl21"
 
 import (
 	"io"
 	"unsafe"
 
-	"github.com/MJKWoolnough/engine"
-	graphics "github.com/MJKWoolnough/engine/graphics/gl21"
 	"github.com/go-gl/gl/v2.1/gl"
+	"vimagination.zapto.org/engine"
+	graphics "vimagination.zapto.org/engine/graphics/gl21"
 )
 
 func init() {

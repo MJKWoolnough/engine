@@ -1,8 +1,8 @@
-package gl33
+package gl33 // import "vimagination.zapto.org/engine/graphics/gl33"
 
 import (
-	"github.com/MJKWoolnough/engine"
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"vimagination.zapto.org/engine"
 )
 
 func init() {

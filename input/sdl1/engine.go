@@ -1,11 +1,11 @@
-package sdl1
+package sdl1 // import "vimagination.zapto.org/engine/input/sdl1"
 
 import (
 	"errors"
 	"runtime"
 
-	"github.com/MJKWoolnough/engine"
 	"github.com/banthar/Go-SDL/sdl"
+	"vimagination.zapto.org/engine"
 )
 
 type sdlengine struct {

@@ -1,14 +1,14 @@
-// +build js
+// +build js // import "vimagination.zapto.org/engine/windows/webgl"
 
 package webgl
 
 import (
-	"github.com/MJKWoolnough/engine"
-	"github.com/MJKWoolnough/gopherjs/xdom"
-	"github.com/MJKWoolnough/gopherjs/xjs"
 	"github.com/gopherjs/gopherjs/js"
 	"github.com/gopherjs/webgl"
 	"honnef.co/go/js/dom"
+	"vimagination.zapto.org/engine"
+	"vimagination.zapto.org/gopherjs/xdom"
+	"vimagination.zapto.org/gopherjs/xjs"
 )
 
 var (

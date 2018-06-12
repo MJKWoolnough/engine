@@ -1,8 +1,8 @@
-package gl21
+package gl21 // import "vimagination.zapto.org/engine/graphics/gl21"
 
 import (
-	"github.com/MJKWoolnough/engine"
 	"github.com/go-gl/gl/v2.1/gl"
+	"vimagination.zapto.org/engine"
 )
 
 func init() {
